@@ -20,8 +20,8 @@ void testSupport(int major, int minor) {
 }
 
 int main(int argc, char **argv) {
-    const int major = 3;
-    const int minor = 2;
+    const int major = 4;
+    const int minor = 6;
 
     if (glfwInit() == GLFW_FALSE) {
         puts("glfwInit returned GLFW_FALSE");
