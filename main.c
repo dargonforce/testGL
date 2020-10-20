@@ -12,13 +12,12 @@ void errorCallback(int errno, const char *msg) {
 void testSupport(int major, int minor) {
     bool support = gl3wIsSupported(major, minor);
     if (support) {
-        printf("OpenGL %d.%d is supported\n", major, minor);
+        printf("TEST OpenGL %d.%d is supported\n", major, minor);
     }
     else {
-        printf("OpenGL %d.%d is not supported\n", major, minor);
+        printf("TEST OpenGL %d.%d is not supported\n", major, minor);
     }
 }
-
 
 int main(int argc, char **argv) {
     const int major = 3;
