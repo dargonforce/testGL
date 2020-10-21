@@ -1,12 +1,18 @@
-#include <GL/gl3w.h>
-#include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <inttypes.h>
 #include <stdbool.h>
+#include <errno.h>
 
-void errorCallback(int errno, const char *msg) {
-    printf("GLFW error %d: %s\n", errno, msg);
+#include <GL/gl3w.h>
+#include <GLFW/glfw3.h>
+
+#define DEFAULT_MAJOR (3)
+#define DEFAULT_MINOR (3)
+
+void errorCallback(int err, const char *msg) {
+    printf("GLFW error %d: %s\n", err, msg);
 }
 
 void testSupport(int major, int minor) {
@@ -19,9 +25,46 @@ void testSupport(int major, int minor) {
     }
 }
 
+bool parseString(const char *string, int *rv) {
+    *rv = strtoimax(string, NULL, 10);
+    if (*rv == UINTMAX_MAX && errno == ERANGE) {
+        printf("Unable to parse \"%s\"\n", string);
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
 int main(int argc, char **argv) {
-    const int major = 3;
-    const int minor = 2;
+    int major, minor;
+    switch (argc) {
+        case 1:
+        {
+            // use defaults
+            major = DEFAULT_MAJOR;
+            minor = DEFAULT_MINOR;
+        }
+        break;
+        case 3:
+        {
+            bool success = true;
+            const char *majorString = argv[1];
+            const char *minorString = argv[2];
+            success = parseString(argv[1], &major);
+            success = parseString(argv[2], &minor) && success;
+            if (!success) {
+                exit(1);
+            }
+        }
+        break;
+        default:
+        {
+            printf("Expected 2 or 0 arguments, got %d\n", argc);
+            exit(1);
+        }
+        break;
+    }
 
     if (glfwInit() == GLFW_FALSE) {
         puts("glfwInit returned GLFW_FALSE");
@@ -40,13 +83,13 @@ int main(int argc, char **argv) {
     }
 
     glfwMakeContextCurrent(window);
+    
     if (gl3wInit() != GL3W_OK) {
         puts("gl3wInit did not return GL3W_OK");
         exit(1);
     }
 
-    testSupport(3,2);
-    testSupport(4,6);
+    testSupport(major, minor);
 
     printf("OpenGL %s, GLSL %s\n", glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
 
