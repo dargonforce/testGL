@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
     }
 
     glfwMakeContextCurrent(window);
-    
+
     if (gl3wInit() != GL3W_OK) {
         puts("gl3wInit did not return GL3W_OK");
         exit(1);
